@@ -1,0 +1,6 @@
+/target
+/Cargo.lock
+/.cargo/*
+/gallery/target
+/gallery/Cargo.lock
+/gallery/dist

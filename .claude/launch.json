@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "gallery",
+      "runtimeExecutable": "dx",
+      "runtimeArgs": ["serve", "--web", "--addr", "127.0.0.1", "--port", "8095", "--open", "false", "--interactive", "false", "--hot-patch", "false"],
+      "cwd": "gallery",
+      "port": 8095
+    }
+  ]
+}

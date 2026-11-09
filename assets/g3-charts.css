@@ -1,0 +1,589 @@
+/*
+ * g3-charts. Every rule is inside `@layer g3`, as g3-ui's are, so any
+ * unlayered app rule wins. Colors are only g3 theme tokens and color-mix()
+ * over them; the one exception is the default categorical palette below,
+ * used only where the theme sets no `--g3-color-chart-N`.
+ */
+@layer g3 {
+  .g3-chart,
+  .g3-chart-sparkline {
+    /* Validated (CVD-safe adjacent order) against g3-ui's light and dark
+       card colors. light-dark() follows the theme's color-scheme. */
+    --g3-chart-default-1: light-dark(#2a78d6, #3987e5);
+    --g3-chart-default-2: light-dark(#eb6834, #d95926);
+    --g3-chart-default-3: light-dark(#1baf7a, #199e70);
+    --g3-chart-default-4: light-dark(#eda100, #c98500);
+    --g3-chart-default-5: light-dark(#e87ba4, #d55181);
+    --g3-chart-default-6: light-dark(#008300, #008300);
+    --g3-chart-default-7: light-dark(#6250d6, #9085e9);
+    --g3-chart-default-8: light-dark(#e34948, #e66767);
+    /* Drift: two hues, never the status colors. */
+    --g3-chart-positive: var(--g3-color-chart-positive, var(--g3-color-chart-1, var(--g3-chart-default-1)));
+    --g3-chart-negative: var(--g3-color-chart-negative, var(--g3-color-chart-2, var(--g3-chart-default-2)));
+    --g3-chart-gap: var(--g3-color-card);
+    --g3-chart-grid: color-mix(in oklab, var(--g3-color-border) 70%, transparent);
+    --g3-chart-radius: 4px;
+    --g3-chart-motion: 0ms;
+  }
+
+  .g3-chart {
+    container: g3-chart / inline-size;
+    position: relative;
+    margin: 0;
+    min-width: 0;
+    color: var(--g3-color-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .g3-chart[data-g3-mode="md"] {
+    --g3-chart-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .g3-chart,
+    .g3-chart-sparkline {
+      --g3-chart-motion: 420ms;
+    }
+  }
+
+  /* Visually hidden, still read. */
+  .g3-chart-table,
+  .g3-chart-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .g3-chart-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .g3-chart-svg:focus-visible,
+  .g3-chart-hit:focus-visible {
+    outline: 2px solid var(--g3-color-accent);
+    outline-offset: 4px;
+    border-radius: 8px;
+  }
+
+  /* Legend */
+  .g3-chart-legend {
+    display: grid;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+    min-width: 0;
+  }
+
+  .g3-chart-legend-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .g3-chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    color: var(--g3-color-text-secondary);
+    transition: color calc(var(--g3-chart-motion) / 3);
+  }
+
+  .g3-chart-legend-item[data-active] {
+    color: var(--g3-color-text);
+  }
+
+  .g3-chart-legend-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .g3-chart-legend-value {
+    color: var(--g3-color-text);
+  }
+
+  .g3-chart-swatch {
+    flex: none;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 3px;
+  }
+
+  .g3-chart-swatch-line {
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  /* Donut and sunburst */
+  .g3-chart-body {
+    display: grid;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .g3-chart-square {
+    position: relative;
+    width: 100%;
+    max-width: 22rem;
+    aspect-ratio: 1;
+    justify-self: center;
+  }
+
+  .g3-chart-track {
+    fill: none;
+    stroke: var(--g3-color-control);
+  }
+
+  .g3-chart-seg,
+  .g3-chart-band {
+    fill: none;
+    cursor: pointer;
+    transition:
+      stroke-dasharray var(--g3-chart-motion) ease,
+      stroke-dashoffset var(--g3-chart-motion) ease,
+      opacity calc(var(--g3-chart-motion) / 3);
+  }
+
+  .g3-chart-band {
+    stroke-width: 4.5;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .g3-chart-sunburst .g3-chart-band {
+    opacity: 0.85;
+  }
+
+  /* Hovering or focusing a mark recedes the rest. */
+  .g3-chart-svg:has(.g3-chart-seg:hover, .g3-chart-seg[data-active]) .g3-chart-seg:not(:hover, [data-active]) {
+    opacity: 0.45;
+  }
+
+  .g3-chart-seg[data-selected] {
+    stroke-opacity: 1;
+  }
+
+  .g3-chart-svg:focus-visible .g3-chart-seg[data-active] {
+    outline: none;
+    filter: drop-shadow(0 0 1.5px var(--g3-color-text));
+  }
+
+  .g3-chart-center {
+    position: absolute;
+    inset: 22%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.125rem;
+    text-align: center;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .g3-chart-sunburst .g3-chart-center {
+    inset: 36%;
+  }
+
+  .g3-chart-center-label {
+    max-width: 100%;
+    font-size: 0.8125rem;
+    color: var(--g3-color-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .g3-chart-center-value {
+    font-size: 1.375rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--g3-color-text);
+  }
+
+  .g3-chart-sunburst .g3-chart-center-value {
+    font-size: 1.0625rem;
+  }
+
+  .g3-chart-center-caption {
+    font-size: 0.75rem;
+    color: var(--g3-color-text-secondary);
+  }
+
+  .g3-chart-key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--g3-color-text-secondary);
+  }
+
+  .g3-chart-key-target,
+  .g3-chart-key-actual {
+    display: inline-block;
+    width: 1rem;
+    border-radius: 2px;
+    background: var(--g3-color-text-tertiary);
+  }
+
+  .g3-chart-key-target {
+    height: 0.625rem;
+  }
+
+  .g3-chart-key-actual {
+    height: 3px;
+    margin-left: 0.5rem;
+  }
+
+  @container g3-chart (width >= 34rem) {
+    .g3-chart-donut .g3-chart-body {
+      grid-template-columns: minmax(12rem, 20rem) minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  /* Target bars */
+  .g3-chart-bar-list {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .g3-chart-bar-item {
+    min-width: 0;
+  }
+
+  .g3-chart-bar-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "label value"
+      "track track"
+      "detail detail";
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    width: 100%;
+    padding: 0.5rem 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+  }
+
+  button.g3-chart-bar-row {
+    cursor: pointer;
+    border-radius: var(--g3-chart-radius);
+  }
+
+  button.g3-chart-bar-row:hover {
+    background: color-mix(in oklab, var(--g3-color-control) 50%, transparent);
+  }
+
+  button.g3-chart-bar-row:focus-visible {
+    outline: 2px solid var(--g3-color-accent);
+    outline-offset: 2px;
+  }
+
+  .g3-chart-bar-label {
+    grid-area: label;
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+  }
+
+  .g3-chart-bar-value {
+    grid-area: value;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-align: end;
+  }
+
+  .g3-chart-bar-detail {
+    grid-area: detail;
+    font-size: 0.75rem;
+    color: var(--g3-color-text-secondary);
+  }
+
+  .g3-chart-bar-track {
+    grid-area: track;
+    position: relative;
+    display: block;
+    height: 0.75rem;
+    border-radius: var(--g3-chart-radius);
+    background: var(--g3-color-control);
+  }
+
+  .g3-chart-bars[data-variant="grouped"] .g3-chart-bar-track {
+    height: 1.25rem;
+    background: none;
+  }
+
+  .g3-chart-bars[data-variant="drift"] .g3-chart-bar-track {
+    background: color-mix(in oklab, var(--g3-color-control) 60%, transparent);
+  }
+
+  /* Fills are positioned, so their height never depends on the track's
+     content. */
+  .g3-chart-bar-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    max-width: 100%;
+    border-radius: var(--g3-chart-radius);
+    transition: width var(--g3-chart-motion) ease, left var(--g3-chart-motion) ease;
+  }
+
+  .g3-chart-bars[data-variant="grouped"] .g3-chart-bar-fill {
+    top: auto;
+    height: 0.5rem;
+  }
+
+  .g3-chart-bars[data-variant="grouped"] .g3-chart-bar-goal {
+    top: 0;
+    bottom: auto;
+  }
+
+  .g3-chart-bar-goal {
+    background: color-mix(in oklab, var(--g3-color-text-tertiary) 45%, var(--g3-color-card));
+  }
+
+  .g3-chart-bar-fill[data-sign="positive"] {
+    background: var(--g3-chart-positive);
+  }
+
+  .g3-chart-bar-fill[data-sign="negative"] {
+    background: var(--g3-chart-negative);
+  }
+
+  .g3-chart-bar-target,
+  .g3-chart-bar-zero {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 2px;
+    margin-left: -1px;
+    border-radius: 1px;
+    background: var(--g3-color-text);
+    transition: left var(--g3-chart-motion) ease;
+  }
+
+  .g3-chart-bar-zero {
+    left: 50%;
+    background: var(--g3-color-text-tertiary);
+  }
+
+  @container g3-chart (width >= 36rem) {
+    .g3-chart-bar-row {
+      grid-template-columns: minmax(6rem, 12rem) minmax(0, 1fr) minmax(4.5rem, auto) minmax(6.5rem, auto);
+      grid-template-areas: "label track value detail";
+      gap: 1rem;
+    }
+
+    .g3-chart-bar-detail {
+      text-align: end;
+    }
+  }
+
+  /* Line chart */
+  .g3-chart-cartesian {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 0.5rem;
+  }
+
+  .g3-chart-yaxis {
+    position: relative;
+    min-width: 2.25rem;
+  }
+
+  .g3-chart-xaxis {
+    position: relative;
+    grid-column: 2;
+    height: 1.5rem;
+  }
+
+  .g3-chart-tick {
+    position: absolute;
+    font-size: 0.6875rem;
+    line-height: 1;
+    color: var(--g3-color-text-tertiary);
+    white-space: nowrap;
+  }
+
+  .g3-chart-yaxis .g3-chart-tick {
+    right: 0;
+    transform: translateY(-50%);
+  }
+
+  .g3-chart-xaxis .g3-chart-tick {
+    top: 0.5rem;
+    transform: translateX(-50%);
+  }
+
+  .g3-chart-xaxis .g3-chart-tick[data-edge="start"] {
+    transform: none;
+  }
+
+  .g3-chart-xaxis .g3-chart-tick[data-edge="end"] {
+    transform: translateX(-100%);
+  }
+
+  .g3-chart-plot {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    min-height: 10rem;
+  }
+
+  .g3-chart-grid {
+    stroke: var(--g3-chart-grid);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Narrow charts keep only the sparse ticks. */
+  .g3-chart-tick:not([data-sparse]),
+  .g3-chart-grid:not([data-sparse]) {
+    display: none;
+  }
+
+  .g3-chart-line {
+    fill: none;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .g3-chart-area {
+    stroke: none;
+    fill-opacity: 0.16;
+  }
+
+  .g3-chart-hit {
+    position: absolute;
+    inset: 0;
+    touch-action: pan-y;
+    cursor: crosshair;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .g3-chart-crosshair {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    border-left: 1px solid var(--g3-color-text-tertiary);
+    pointer-events: none;
+    transition: left calc(var(--g3-chart-motion) / 6) linear;
+  }
+
+  .g3-chart-dot {
+    position: absolute;
+    left: 0;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--g3-color-card);
+    transform: translate(-50%, -50%);
+  }
+
+  .g3-chart-tooltip {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.625rem;
+    display: grid;
+    gap: 0.25rem;
+    min-width: 8rem;
+    max-width: 14rem;
+    padding: 0.5rem 0.625rem;
+    border-radius: 8px;
+    background: var(--g3-color-surface);
+    color: var(--g3-color-text);
+    box-shadow: 0 2px 10px var(--g3-color-shadow);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+
+  .g3-chart[data-g3-mode="ios"] .g3-chart-tooltip {
+    border-radius: 12px;
+    border: 0.5px solid var(--g3-color-border);
+    box-shadow: 0 4px 16px var(--g3-color-shadow);
+  }
+
+  .g3-chart-tooltip[data-side="left"] {
+    left: auto;
+    right: 0.625rem;
+  }
+
+  .g3-chart-tooltip-title {
+    font-weight: 600;
+  }
+
+  .g3-chart-tooltip-row {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .g3-chart-tooltip-label {
+    flex: 1;
+    color: var(--g3-color-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .g3-chart-tooltip-value {
+    font-weight: 600;
+  }
+
+  @container g3-chart (width >= 30rem) {
+    .g3-chart-tick:not([data-sparse]),
+    .g3-chart-grid:not([data-sparse]) {
+      display: revert;
+    }
+
+    .g3-chart-plot {
+      aspect-ratio: 16 / 7;
+    }
+  }
+
+  @container g3-chart (width >= 60rem) {
+    .g3-chart-plot {
+      aspect-ratio: 3 / 1;
+    }
+  }
+
+  /* Sparkline: sized by the text around it. */
+  .g3-chart-sparkline {
+    display: inline-block;
+    width: 6em;
+    height: 1.75em;
+    vertical-align: middle;
+    overflow: visible;
+  }
+
+  .g3-chart-sparkline .g3-chart-line {
+    stroke-width: 1.5;
+  }
+}

@@ -1,0 +1,45 @@
+/* Layout only; every color is a g3 token. */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.gallery-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@container g3-app-shell (width >= 48rem) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gallery-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.gallery-switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.gallery-switches a {
+  color: var(--g3-color-accent);
+}
+
+.gallery-switches a[aria-current="page"] {
+  color: var(--g3-color-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gallery-holding {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--g3-color-border);
+}

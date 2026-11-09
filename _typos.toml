@@ -1,0 +1,7 @@
+[files]
+extend-exclude = ["target/**", "gallery/target/**", "node_modules/**"]
+
+[default.extend-words]
+dioxus = "dioxus"
+# Largest-triangle-three-buckets.
+lttb = "lttb"

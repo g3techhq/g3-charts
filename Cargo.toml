@@ -1,0 +1,50 @@
+[package]
+name = "g3-charts"
+version = "0.1.0"
+
+edition = "2024"
+rust-version = "1.88"
+description = "Dioxus charts drawn as SVG from Rust: donut, sunburst, target bars, time-series lines and sparklines."
+repository = "https://github.com/g3techhq/g3-charts"
+readme = "README.md"
+documentation = "https://docs.rs/g3-charts"
+license = "MIT OR Apache-2.0"
+keywords = ["dioxus", "charts", "svg", "ui", "mobile"]
+categories = ["gui", "visualization", "wasm", "web-programming"]
+include = ["/Cargo.toml", "/README.md", "/CHANGELOG.md", "/LICENSE-MIT", "/LICENSE-APACHE", "/src/**", "/assets/**"]
+
+[lib]
+name = "g3_charts"
+path = "src/lib.rs"
+
+[dependencies]
+dioxus = { version = "=0.8.0-alpha.3", default-features = false, features = ["lib"] }
+manganis = "=0.8.0-alpha.3"
+g3-ui = "0.7"
+
+[dev-dependencies]
+dioxus-ssr = "=0.8.0-alpha.3"
+
+[patch.crates-io]
+# Dioxus fork (upstream main + g3 commits; see G3-PATCHES.md there), the same
+# block as g3-ui's. Local builds use the sibling checkouts through
+# Projects/.cargo/config.toml.
+dioxus = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-html = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-ssr = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+manganis = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-signals = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-vdom-template = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+lazy-js-bundle = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-icons = { git = "https://github.com/Gateway3B/dioxus-icons", branch = "main" }
+dioxus-sdk-time = { git = "https://github.com/Gateway3B/sdk", branch = "main" }
+# g3 crates are not published until Dioxus 0.8.0:
+g3-ui = { git = "https://github.com/g3techhq/g3-ui", branch = "main" }
+g3-route-transitions = { git = "https://github.com/g3techhq/g3-route-transitions", branch = "main" }
+
+[lints.rust]
+missing_docs = "warn"
+
+[lints.clippy]
+cloned_instead_of_copied = "warn"
+allow_attributes_without_reason = "warn"

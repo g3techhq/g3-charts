@@ -1,0 +1,11 @@
+[application]
+name = "g3-charts-gallery"
+default_platform = "web"
+out_dir = "dist"
+
+[web.app]
+title = "g3-charts gallery"
+
+[web.watcher]
+reload_html = true
+watch_path = ["src", "assets", "../src", "../assets"]

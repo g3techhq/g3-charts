@@ -1,0 +1,56 @@
+[package]
+name = "g3-charts-gallery"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "Every g3-charts chart, server-rendered and hydrated, in light and dark, md and ios."
+
+[dependencies]
+dioxus = { version = "=0.8.0-alpha.3", features = ["fullstack", "router"] }
+g3-ui = "0.7"
+g3-charts = { path = ".." }
+
+[features]
+default = ["web"]
+web = ["dioxus/web"]
+server = ["dioxus/server"]
+mobile = ["dioxus/mobile"]
+
+# `getrandom` needs an explicit browser backend on wasm, as in g3-stack.
+[target.wasm32-unknown-unknown.dependencies.getrandom_v03]
+package = "getrandom"
+version = "0.3.3"
+features = ["wasm_js"]
+
+[target.wasm32-unknown-unknown.dependencies.getrandom_v02]
+package = "getrandom"
+version = "0.2"
+features = ["js"]
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"
+
+# The gallery is its own workspace root, so it carries the library's patches.
+[patch.crates-io]
+dioxus = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-html = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-ssr = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+manganis = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-signals = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-vdom-template = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+lazy-js-bundle = { git = "https://github.com/Gateway3B/dioxus", branch = "main" }
+dioxus-icons = { git = "https://github.com/Gateway3B/dioxus-icons", branch = "main" }
+dioxus-sdk-time = { git = "https://github.com/Gateway3B/sdk", branch = "main" }
+g3-ui = { git = "https://github.com/g3techhq/g3-ui", branch = "main" }
+g3-route-transitions = { git = "https://github.com/g3techhq/g3-route-transitions", branch = "main" }
+
+[lints.clippy]
+cloned_instead_of_copied = "warn"
+allow_attributes_without_reason = "warn"
