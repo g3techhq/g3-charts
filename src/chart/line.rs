@@ -291,15 +291,21 @@ fn Scrubber(
                         span { key: "{label}", class: "g3-chart-dot", style: "top:{top:.3}%;background:{color}" }
                     }
                 }
-                div { class: "g3-chart-tooltip", "data-side": if x > 60.0 { "left" } else { "right" },
-                    span { class: "g3-chart-tooltip-title", "{date_label(p.t, offset)}" }
-                    for (color, label, value, _) in readings.iter() {
-                        span { key: "{label}", class: "g3-chart-tooltip-row",
-                            span { class: "g3-chart-swatch", style: "background:{color}" }
-                            span { class: "g3-chart-tooltip-label", "{label}" }
-                            span { class: "g3-chart-tooltip-value",
-                                {value.map_or("–".into(), |v| format.format(v))}
-                            }
+            }
+            // Beside the crosshair, not inside it, so its CSS can measure the
+            // plot and keep a narrow chart's tooltip within it.
+            div {
+                class: "g3-chart-tooltip",
+                aria_hidden: "true",
+                "data-side": if x > 60.0 { "left" } else { "right" },
+                style: "--g3-chart-x:{x:.3}",
+                span { class: "g3-chart-tooltip-title", "{date_label(p.t, offset)}" }
+                for (color, label, value, _) in readings.iter() {
+                    span { key: "{label}", class: "g3-chart-tooltip-row",
+                        span { class: "g3-chart-swatch", style: "background:{color}" }
+                        span { class: "g3-chart-tooltip-label", "{label}" }
+                        span { class: "g3-chart-tooltip-value",
+                            {value.map_or("–".into(), |v| format.format(v))}
                         }
                     }
                 }

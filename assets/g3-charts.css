@@ -468,6 +468,12 @@
     position: relative;
     aspect-ratio: 4 / 3;
     min-height: 10rem;
+    /* With an automatic width, the ratio works the width back out from the
+       clamped height (13.3rem), and in a narrow card the plot overflows its
+       column. A set width leaves the ratio deciding only the height, so a
+       narrow plot keeps its minimum height and fits the width. */
+    width: 100%;
+    min-width: 0;
   }
 
   .g3-chart-grid {
@@ -523,10 +529,15 @@
     transform: translate(-50%, -50%);
   }
 
+  /* Positioned in the plot from `--g3-chart-x`, the crosshair's 0–100. */
   .g3-chart-tooltip {
     position: absolute;
     top: 0.25rem;
-    left: 0.625rem;
+    left: calc(var(--g3-chart-x) * 1% + 0.625rem);
+    pointer-events: none;
+    transition-property: left, right, transform;
+    transition-duration: calc(var(--g3-chart-motion) / 6);
+    transition-timing-function: linear;
     display: grid;
     gap: 0.25rem;
     min-width: 8rem;
@@ -548,7 +559,21 @@
 
   .g3-chart-tooltip[data-side="left"] {
     left: auto;
-    right: 0.625rem;
+    right: calc(100% - var(--g3-chart-x) * 1% + 0.625rem);
+  }
+
+  /* Too narrow to sit beside the line: it slides along the top instead,
+     from the left edge at the start to the right edge at the end, so it
+     never leaves the plot. */
+  @container g3-chart (width < 30rem) {
+    .g3-chart-tooltip,
+    .g3-chart-tooltip[data-side="left"] {
+      left: calc(var(--g3-chart-x) * 1%);
+      right: auto;
+      transform: translateX(calc(var(--g3-chart-x) * -1%));
+      min-width: min(8rem, 100%);
+      max-width: 100%;
+    }
   }
 
   .g3-chart-tooltip-title {
@@ -563,6 +588,7 @@
 
   .g3-chart-tooltip-label {
     flex: 1;
+    min-width: 0;
     color: var(--g3-color-text-secondary);
     overflow: hidden;
     text-overflow: ellipsis;

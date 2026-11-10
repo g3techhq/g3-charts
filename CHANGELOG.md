@@ -15,6 +15,10 @@ All notable changes to g3-charts are recorded here. The format follows
 - `TargetBars` in bullet, grouped and drift variants.
 - `LineChart` with a calendar-aligned time axis, area fills, LTTB
   downsampling, and a crosshair tooltip driven by pointer, touch or keyboard.
+  In a card narrower than about 16rem the plot keeps its minimum height and
+  fits the width, rather than overflowing the card. Below 30rem the tooltip
+  slides along the top of the plot instead of sitting beside the line, so it
+  stays inside the chart.
 - `Sparkline`.
 - `geom`: linear, band and time scales, nice ticks, arc paths and dashes,
   LTTB, nearest-point search, path building, and value formatting.

@@ -292,3 +292,34 @@ fn the_default_palette_is_declared_on_the_root() {
         );
     }
 }
+
+/// A minimum height on an aspect-ratio box also sets a minimum width, so a
+/// line chart in a card narrower than about 16rem overflowed it.
+#[test]
+fn the_line_plot_can_be_narrower_than_its_ratio_and_minimum_height_imply() {
+    let plot = STYLESHEET
+        .split(".g3-chart-plot {")
+        .nth(1)
+        .expect("a .g3-chart-plot rule");
+    let plot = &plot[..plot.find('}').expect("the rule closes")];
+    assert!(plot.contains("min-height:"));
+    assert!(plot.contains("width: 100%;"), "{plot}");
+    assert!(plot.contains("min-width: 0;"), "{plot}");
+}
+
+/// A tooltip beside the crosshair needs about 9rem on one side; a narrower
+/// chart slides it along the top of the plot, kept within the plot's width.
+#[test]
+fn a_narrow_charts_tooltip_stays_inside_the_plot() {
+    let narrow = STYLESHEET
+        .split("@container g3-chart (width < 30rem)")
+        .nth(1)
+        .expect("a narrow-chart rule");
+    let narrow = &narrow[..narrow.find("\n  }").expect("the rule closes")];
+    assert!(narrow.contains(".g3-chart-tooltip"), "{narrow}");
+    assert!(narrow.contains("max-width: 100%;"), "{narrow}");
+    assert!(
+        narrow.contains("translateX(calc(var(--g3-chart-x) * -1%))"),
+        "{narrow}"
+    );
+}
