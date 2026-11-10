@@ -18,6 +18,9 @@ All notable changes to g3-charts are recorded here. The format follows
 - `Sparkline`.
 - `geom`: linear, band and time scales, nice ticks, arc paths and dashes,
   LTTB, nearest-point search, path building, and value formatting.
+- `ChartColor::css()` resolves anywhere on the page, not only inside a chart:
+  the default palette is declared on `:root`, so an app's own legend swatches
+  match the chart.
 - `ChartStyles`, the stylesheet link for desktop and mobile shells.
 - Series tokens `--g3-color-chart-1` … `-8` (and `-positive`/`-negative` for
   drift), with a colour-blind-safe default palette for light and dark.

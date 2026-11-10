@@ -265,3 +265,30 @@ fn empty_charts_render_safely() {
         }
     });
 }
+
+/// The first stylesheet to name a layer fixes the page's layer order, and
+/// this one can load before g3-ui's. If it named only `g3`, Tailwind's
+/// `base` would rank above every g3-ui component and reset them flat.
+#[test]
+fn the_stylesheet_declares_g3_uis_layer_order_before_any_rule() {
+    let first = STYLESHEET
+        .lines()
+        .map(str::trim)
+        .find(|line| line.starts_with("@layer"))
+        .expect("a layer statement");
+    assert_eq!(first, "@layer theme, base, g3, components, utilities;");
+}
+
+/// `ChartColor::css()` is public, so apps put it on their own swatches. The
+/// default palette must be on the root for those to resolve outside a chart.
+#[test]
+fn the_default_palette_is_declared_on_the_root() {
+    let root = STYLESHEET.split(":root {").nth(1).expect("a :root rule");
+    let root = &root[..root.find('}').expect("the rule closes")];
+    for n in 1..=8 {
+        assert!(
+            root.contains(&format!("--g3-chart-default-{n}:")),
+            "--g3-chart-default-{n} is not on :root"
+        );
+    }
+}

@@ -3,12 +3,23 @@
  * unlayered app rule wins. Colors are only g3 theme tokens and color-mix()
  * over them; the one exception is the default categorical palette below,
  * used only where the theme sets no `--g3-color-chart-N`.
+ *
+ * The order statement repeats g3-ui's. The first stylesheet to name a layer
+ * fixes the order for the page, and this one can load before g3-ui's: in a
+ * web build both are static head entries, in whatever order the asset system
+ * lists them. Naming only `g3` would then sort it below Tailwind's `base`,
+ * whose preflight strips every g3-ui component of its padding and borders.
  */
+@layer theme, base, g3, components, utilities;
+
 @layer g3 {
-  .g3-chart,
-  .g3-chart-sparkline {
+  /* On the root, not the chart, so `ChartColor::css()` also resolves outside
+     a chart, such as in an app's own legend swatch. The value is unresolved
+     until a color property uses it, so light-dark() follows the color-scheme
+     of the element that does. */
+  :root {
     /* Validated (CVD-safe adjacent order) against g3-ui's light and dark
-       card colors. light-dark() follows the theme's color-scheme. */
+       card colors. */
     --g3-chart-default-1: light-dark(#2a78d6, #3987e5);
     --g3-chart-default-2: light-dark(#eb6834, #d95926);
     --g3-chart-default-3: light-dark(#1baf7a, #199e70);
@@ -17,6 +28,10 @@
     --g3-chart-default-6: light-dark(#008300, #008300);
     --g3-chart-default-7: light-dark(#6250d6, #9085e9);
     --g3-chart-default-8: light-dark(#e34948, #e66767);
+  }
+
+  .g3-chart,
+  .g3-chart-sparkline {
     /* Drift: two hues, never the status colors. */
     --g3-chart-positive: var(--g3-color-chart-positive, var(--g3-color-chart-1, var(--g3-chart-default-1)));
     --g3-chart-negative: var(--g3-color-chart-negative, var(--g3-color-chart-2, var(--g3-chart-default-2)));

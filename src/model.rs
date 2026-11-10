@@ -16,7 +16,8 @@ pub enum ChartColor {
 }
 
 impl ChartColor {
-    /// The CSS color value.
+    /// The CSS color value. It resolves anywhere on a page that loads the
+    /// stylesheet, not only inside a chart, so an app's own legend can use it.
     ///
     /// ```
     /// use g3_charts::ChartColor;
