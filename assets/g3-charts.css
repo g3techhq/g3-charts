@@ -267,8 +267,9 @@
     margin-left: 0.5rem;
   }
 
+  /* Beside the legend when there is one; a lone ring stays centred. */
   @container g3-chart (width >= 34rem) {
-    .g3-chart-donut .g3-chart-body {
+    .g3-chart-donut .g3-chart-body:has(> .g3-chart-legend) {
       grid-template-columns: minmax(12rem, 20rem) minmax(0, 1fr);
       gap: 1.5rem;
     }
@@ -430,6 +431,19 @@
   .g3-chart-yaxis {
     position: relative;
     min-width: 2.25rem;
+  }
+
+  .g3-chart-yaxis-sizer {
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    font-size: 0.6875rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .g3-chart-yaxis-sizer span {
+    display: block;
   }
 
   .g3-chart-xaxis {

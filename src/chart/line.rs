@@ -86,6 +86,13 @@ pub fn LineChart(
             }
             div { class: "g3-chart-cartesian",
                 div { class: "g3-chart-yaxis", aria_hidden: "true",
+                    // The ticks are placed absolutely, so these unseen copies
+                    // give the column the widest label's width.
+                    div { class: "g3-chart-yaxis-sizer",
+                        for tick in layout.y_ticks.iter() {
+                            span { key: "{tick.label}", "{tick.label}" }
+                        }
+                    }
                     for tick in layout.y_ticks.iter() {
                         span {
                             key: "{tick.label}",
