@@ -28,3 +28,8 @@ All notable changes to g3-charts are recorded here. The format follows
 - `ChartStyles`, the stylesheet link for desktop and mobile shells.
 - Series tokens `--g3-color-chart-1` … `-8` (and `-positive`/`-negative` for
   drift), with a colour-blind-safe default palette for light and dark.
+
+### Fixed
+
+- Clicking a `Donut`, `Sunburst` or `LineChart` no longer draws the browser's
+  focus outline around it; the accent ring still shows for keyboard focus.

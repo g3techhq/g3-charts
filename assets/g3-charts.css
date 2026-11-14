@@ -89,6 +89,12 @@
     border-radius: 8px;
   }
 
+  /* Chromium outlines a clicked SVG even though it is not :focus-visible. */
+  .g3-chart-svg:focus:not(:focus-visible),
+  .g3-chart-hit:focus:not(:focus-visible) {
+    outline: none;
+  }
+
   /* Legend */
   .g3-chart-legend {
     display: grid;
